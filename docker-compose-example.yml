@@ -1,0 +1,61 @@
+version: '3.9'
+
+services:
+  development:
+    build:
+      context: .
+      target: development
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - '4000:4000'
+    command: >
+      sh -c "npm run push &&
+      npm run generate &&
+      npm run start:dev"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=
+      - PORT=4000
+      - DEFAULT_ADMIN=admin@example.com
+      - DEFAULT_PASS=P@ssw0rd
+      - TWILIO_ACCOUNT_SID=
+      - TWILIO_AUTH_TOKEN=
+      - TWILIO_VERIFY_SERVICE_SID=
+      - TWILIO_MSG_SERVICE_SID=
+      - SENDGRID_API=
+      - AT_SECRET=this-is-at-secret
+      - RT_SECRET=this-is-rt-secret
+      - SWAGGER_USER=admin
+      - SWAGGER_PASSWORD=P@ssw0rd
+
+  production:
+    build:
+      context: .
+      target: production
+    volumes:
+      - /usr/src/app/node_modules
+    ports:
+      - '4001:4001'
+    command: node dist/main.js
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=
+      - PORT=4001
+      - DEFAULT_ADMIN=admin@example.com
+      - DEFAULT_PASS=P@ssw0rd
+      - TWILIO_ACCOUNT_SID=
+      - TWILIO_AUTH_TOKEN=
+      - TWILIO_VERIFY_SERVICE_SID=
+      - TWILIO_MSG_SERVICE_SID=
+      - SENDGRID_API=
+      - AT_SECRET=this-is-at-secret
+      - RT_SECRET=this-is-rt-secret
+      - SWAGGER_USER=admin
+      - SWAGGER_PASSWORD=P@ssw0rd
+
+networks:
+  default:
+    external:
+      name: app-network

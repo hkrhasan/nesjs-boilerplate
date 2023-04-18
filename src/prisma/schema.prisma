@@ -1,0 +1,108 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // flags
+  isFirstLogin  Boolean @default(true)
+  isActive      Boolean @default(true)
+  waitForOtp    Boolean @default(false)
+  emailVerified Boolean @default(false)
+  phoneVerified Boolean @default(false)
+
+  email        String?    @unique
+  phone        String?    @unique
+  userName     String?    @unique
+  frsitName    String?
+  lastName     String?
+  image        String?
+  fcmToken     String?
+  hash         String?
+  hashedRt     String?
+  role         UserRole[]
+  referralCode String?    @unique
+
+  // client specifice feilds 
+  webhookUrl String?
+  apiKey     String?
+  appSecret  String?
+
+  referrals  User[]  @relation(name: "referrals")
+  referred   User?   @relation(name: "referrals", fields: [referredId], references: [referralCode], onDelete: Cascade)
+  referredId String?
+
+  // regiestedPujari  User[]           @relation(name: "regiestedPujari")
+  // salesExecutive   User?            @relation(name: "regiestedPujari", fields: [salesExecutiveId], references: [id], onDelete: Cascade)
+  // salesExecutiveId Int?
+  // PujariBusiness   PujariBusiness[]
+  // Address          Address[]
+
+  @@map("users")
+}
+
+// model PujariBusiness {
+//   id        Int      @id @default(autoincrement())
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+
+//   // flags
+//   isActive Boolean @default(true)
+
+//   name        String
+//   description String?
+//   image       String?
+//   phone       String?
+//   email       String?
+//   website     String?
+//   latitude    Float?
+//   longitude   Float?
+
+//   pujari   User?     @relation(fields: [pujariId], references: [id], onDelete: Cascade)
+//   pujariId Int?
+//   Address  Address[]
+
+//   @@map("pujari_business")
+// }
+
+// model Address {
+//   id        Int      @id @default(autoincrement())
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+
+//   // flags
+//   isActive Boolean @default(true)
+
+//   addressLine1 String?
+//   addressLine2 String?
+//   city         String?
+//   state        String?
+//   country      String?
+//   pincode      String?
+
+//   user             User?           @relation(fields: [userId], references: [id], onDelete: Cascade)
+//   userId           Int?
+//   PujariBusiness   PujariBusiness? @relation(fields: [pujariBusinessId], references: [id])
+//   pujariBusinessId Int?
+
+//   @@map("address")
+// }
+
+enum UserRole {
+  ADMIN
+  USER
+  ADMIN_SALES
+  // PUJARI
+  // SUPERADMIN
+}
